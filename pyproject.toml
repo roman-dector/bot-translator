@@ -6,7 +6,6 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-google-cloud-translate = "^3.6.0"
 requests = "^2.26.0"
 python-telegram-bot = "^13.7"
 loguru = "^0.5.3"
