@@ -14,17 +14,28 @@ def get_dict_definition(phrase: str) -> str:
 
         result = []
 
-        result.append(f"<b>Phonetic</b>: {data['phonetic']}\n")
+        log.debug(data)
 
-        #log.debug(data)
-        
+
+        try:
+            result.append(f"<b>Phonetic</b>: {data['phonetic']}\n")
+
+        except KeyError as key_err:
+            log.info(f"Didn't find key {key_err}")
+
+            
         meanings = data["meanings"]
 
         for meaning in meanings:
-            result.append(f"""\
+
+            try:
+                result.append(f"""\n\
 <b>Part of speech</b>: \
-<i>{meaning['partOfSpeech']}</i>\n"""
+<i>{meaning['partOfSpeech']}</i>"""
             )
+            except KeyError as key_err:
+                log.info(f"Didn't find key {key_err}")
+
             
             for definition in meaning["definitions"]:
 
@@ -32,16 +43,23 @@ def get_dict_definition(phrase: str) -> str:
                 try:
                     for k, v in definition.items():
 
-                        if k == "antonyms":
-                            result.append(f"<b>{k}</b>: <i>{v}</i>\n\n") 
-                        else:
-                            result.append(f"<b>{k}</b>: <i>{v}</i>")
+                        match k, v:
+                            case "definition", _:
+                                result.append(f"\n<b>{k}</b>: <i>{v}</i>\n") 
+                            case _, []:
+                                pass
+                            case _, "":
+                                pass
+                            case _:
+                                result.append(f"<b>{k}</b>: <i>{v}</i>\n") 
+
 
                 except ValueError as val_err:
                     log.error(val_err)
 
                 
         return "\n".join(result)
+
 
     else:
         return "Sorry, no result found"
