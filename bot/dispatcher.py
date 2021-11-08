@@ -9,7 +9,7 @@ from telegram.ext import (
             Filters,
         )
 
-from config import TELEGRAM_TOKEN
+from config import TELEGRAM_TOKEN, WEBHOOK_URL, IP
 from commands import (
             start,
             give_definition,
@@ -46,7 +46,7 @@ def run_webhook() -> None:
     setup_dispatcher(updater.dispatcher)
 
     updater.start_webhook(
-        listen="0.0.0.0",
+        listen=IP,
         port=8443,
         url_path=TELEGRAM_TOKEN
     )
