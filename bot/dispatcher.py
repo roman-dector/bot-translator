@@ -40,6 +40,19 @@ def run_polling() -> None:
     updater.idle()
 
 
+def run_webhook() -> None:
+
+    updater = Updater(TELEGRAM_TOKEN)
+    setup_dispatcher(updater.dispatcher)
+
+    updater.start_webhook(
+        listen="0.0.0.0",
+        port=3978,
+        url_path=TELEGRAM_TOKEN
+    )
+
+    updater.bot.setWebhook(WEBHOOK_URL)
+
+
 bot = telegram.Bot(TELEGRAM_TOKEN)
 dispatcher = setup_dispatcher(Dispatcher(bot, None))
-
