@@ -46,13 +46,15 @@ def run_webhook() -> None:
     setup_dispatcher(updater.dispatcher)
 
     updater.start_webhook(
-        listen=IP,
+        listen=f"{IP}",
         port=8443,
-        url_path=TELEGRAM_TOKEN
+        url_path=f"{TELEGRAM_TOKEN}"
     )
 
     updater.bot.setWebhook(WEBHOOK_URL)
+    updater.idle()
 
 
-bot = telegram.Bot(TELEGRAM_TOKEN)
+bot = telegram.Bot(f"{TELEGRAM_TOKEN}")
+bot.setWebhook(f"{WEBHOOK_URL}")
 dispatcher = setup_dispatcher(Dispatcher(bot, None))
