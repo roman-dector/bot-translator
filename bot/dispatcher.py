@@ -9,7 +9,10 @@ from telegram.ext import (
             Filters,
         )
 
-from config import TELEGRAM_TOKEN, WEBHOOK_URL, IP
+from config import (
+        TELEGRAM_TOKEN,
+        WEBHOOK_URL,
+    )
 from commands import (
             start,
             give_definition,
@@ -45,22 +48,25 @@ def run_webhook() -> None:
     updater = Updater(TELEGRAM_TOKEN)
     setup_dispatcher(updater.dispatcher)
 
-    updater.bot.setWebhook(
-        url=WEBHOOK_URL,
-        certificate="cert.pem",
-    )
+    bot_info = telegram.Bot(f"{TELEGRAM_TOKEN}").get_me()
+    bot_link = f"https://t.me/{bot_info['username']}"
+
+    log.info(f"Bot ---> {bot_link} <--- started in webhook mode!")
+
+
+    # NOTE
+    """Changed in version 13.4: start_webhook() now always calls 
+    telegram.Bot.set_webhook(), so pass webhook_url instead of calling 
+    updater.bot.set_webhook(webhook_url) manually.""" 
 
     updater.start_webhook(
-        listen=f"{IP}",
-        port=8443,
+        listen="127.0.0.1",
+        port=5000,
         url_path=f"{TELEGRAM_TOKEN}",
-        key="private.key",
-        cert="cert.pem",
+        webhook_url=f"{WEBHOOK_URL}",
     )
-
     updater.idle()
 
 
 bot = telegram.Bot(f"{TELEGRAM_TOKEN}")
-bot.setWebhook(f"{WEBHOOK_URL}")
 dispatcher = setup_dispatcher(Dispatcher(bot, None))
