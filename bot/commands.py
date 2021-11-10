@@ -15,6 +15,8 @@ def start(update: Update, context: CallbackContext) -> None:
 def give_definition(update: Update, context: CallbackContext) -> None:
     phrase = update.message.text.strip()
 
+    #log.debug(phrase)
+
     update.message.reply_html(
                 get_dict_definition(phrase),
             )
