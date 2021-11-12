@@ -12,6 +12,7 @@ from telegram.ext import (
 from config import (
         TELEGRAM_TOKEN,
         WEBHOOK_URL,
+        PORT
     )
 from commands import (
             start,
@@ -61,7 +62,7 @@ def run_webhook() -> None:
 
     updater.start_webhook(
         listen="127.0.0.1",
-        port=5000,
+        port=PORT,
         url_path=f"{TELEGRAM_TOKEN}",
         webhook_url=f"{WEBHOOK_URL}",
     )
