@@ -2,7 +2,7 @@ from loguru import logger as log
 from telegram import Update, ForceReply
 from telegram.ext import CallbackContext
 
-from dict_api import get_dict_definition
+from dict_api import parse_free_dict_api_v2
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -18,6 +18,6 @@ def give_definition(update: Update, context: CallbackContext) -> None:
     #log.debug(phrase)
 
     update.message.reply_html(
-                get_dict_definition(phrase),
+                parse_free_dict_api_v2(phrase),
             )
 
