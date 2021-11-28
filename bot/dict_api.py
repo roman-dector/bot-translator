@@ -17,13 +17,36 @@ from config import (
 )
 
 
-# Use for translating from English to Russian
+class Translation(BaseModel):
+    text: str
 
-def parse_yandex_dict_api(phrase: str):
-    return requests.get(
+
+class YandexTr(BaseModel):
+    part_of_speech: str = Field(alias="pos")
+    translations: list[Translation] = Field(alias="tr")
+
+
+def parse_yandex_dict_api(phrase: str) -> tuple[str, bool]:
+    response = requests.get(
         "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key="
-        + f"{YANDEX_API_KEY}&lang=en-ru&text={phrase}"
-    ).text
+        + f"{YANDEX_API_KEY}&lang=en-ru&text={phrase.lower()}"
+    )
+
+    if not response:
+        return "", False
+
+    result = []
+
+    for data in json.loads(response.text)["def"]:
+        content = YandexTr.parse_obj(data)
+
+        list_of_translations = [v.text for v in content.translations]
+
+        result.append(
+            f"<b>{content.part_of_speech}</b>: {list_of_translations}\n"
+        )
+
+    return "\n".join(result), True
 
 
 #def parse_oxford_dict_api(phrase: str):
@@ -71,59 +94,6 @@ def parse_yandex_dict_api(phrase: str):
 #    word: str
 
 
-def parse_free_dict_api(phrase: str) -> str:
-
-    response = requests.get(
-        f"https://api.dictionaryapi.dev/api/v2/entries/en/{phrase.lower()}"
-    )
-    
-    if not response:
-        return "Sorry, no result found"
-
-
-    data = json.loads(response.text)[0]
-    result = []
-    log.debug(data)
-
-
-    try:
-        result.append(f"<b>Phonetic</b>: {data['phonetic']}\n")
-    except KeyError as key_err:
-        log.info(f"Didn't find key {key_err}")
-
-        
-    for meaning in data["meanings"]:
-        try:
-            result.append(f"""\n\
-<b>Part of speech</b>: \
-<i>{meaning['partOfSpeech']}</i>"""
-        )
-        except KeyError as key_err:
-            log.info(f"Didn't find key {key_err}")
-
-        
-        for definition in meaning["definitions"]:
-            #log.debug(definition) 
-            try:
-                for k, v in definition.items():
-
-                    match k, v:
-                        case "definition", _:
-                            result.append(f"\n<b>{k}</b>: <i>{v}</i>\n") 
-                        case _, []:
-                            pass
-                        case _, "":
-                            pass
-                        case _:
-                            result.append(f"<b>{k}</b>: <i>{v}</i>\n") 
-
-            except ValueError as val_err:
-                log.error(val_err)
-            
-
-    return "\n".join(result)
-
-
 class Definition(BaseModel):
     definition: str
     example: Optional[str]
@@ -149,14 +119,14 @@ class PhraseSemantic(BaseModel):
     meanings: list[Meaning]
 
 
-def parse_free_dict_api_v2(phrase: str) -> str:
+def parse_free_dict_api(phrase: str) -> tuple[str, bool]:
 
     response = requests.get(
         f"https://api.dictionaryapi.dev/api/v2/entries/en/{phrase.lower()}"
     )
     
     if not response:
-        return "Sorry, no result found"
+            return "", False
 
     result = []
 
@@ -198,13 +168,13 @@ def parse_free_dict_api_v2(phrase: str) -> str:
         result.append("---\n")
 
 
-    return "\n".join(result)
+    return "\n".join(result), True
 
 
 if __name__ == "__main__":
-    data = json.loads(requests.get(
-        "https://api.dictionaryapi.dev/api/v2/entries/en/up"
-    ).text)
+    while True:
+        print("Word below")
 
-    print(PhraseSemantic.parse_obj(data))
+        phrase = input()
+        print(parse_yandex_dict_api(phrase))
 

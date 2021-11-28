@@ -1,4 +1,5 @@
 import os
+from json import loads
 from dotenv import load_dotenv
 
 
@@ -13,4 +14,6 @@ OXFORD_APP_ID = os.getenv("OXFORD_APP_ID")
 OXFORD_APP_KEY = os.getenv("OXFORD_APP_KEY")
 
 YANDEX_API_KEY = os.getenv("YANDEX_API_KEY")
+
+USERS_WITH_ACCESS = loads(os.environ["USERS_WITH_ACCESS"])
 

@@ -2,12 +2,13 @@ from loguru import logger as log
 
 import telegram
 from telegram.ext import (
-            Dispatcher,
-            Updater,
-            CommandHandler,
-            MessageHandler,
-            Filters,
-        )
+        Dispatcher,
+        Updater,
+        CommandHandler,
+        MessageHandler,
+        Filters,
+        CallbackQueryHandler,
+    )
 
 from config import (
         TELEGRAM_TOKEN,
@@ -15,9 +16,10 @@ from config import (
         PORT
     )
 from commands import (
-            start,
-            give_definition,
-        )
+        start,
+        give_definition,
+        give_translation,
+    )
 
 
 def setup_dispatcher(dp) -> Dispatcher:
@@ -26,6 +28,13 @@ def setup_dispatcher(dp) -> Dispatcher:
     dp.add_handler(MessageHandler(
         Filters.text & ~Filters.command, give_definition
     )) 
+
+    # Handle callbacks
+    dp.add_handler(CallbackQueryHandler(
+        give_translation,
+        pattern="translate_button",
+    ))
+
 
     return dp
 
