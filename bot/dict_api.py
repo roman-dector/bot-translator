@@ -5,14 +5,9 @@ from typing import Optional
 from loguru import logger as log
 from pydantic import (
         BaseModel,
-        ValidationError,
-        validator,
         Field,
     )
-from pydantic.dataclasses import dataclass
 from config import (
-    OXFORD_APP_ID,
-    OXFORD_APP_KEY,
     YANDEX_API_KEY,
 )
 
@@ -35,9 +30,13 @@ def parse_yandex_dict_api(phrase: str) -> tuple[str, bool]:
     if not response:
         return "", False
 
+    definitions = json.loads(response.text)["def"]
+    if not definitions:
+        return "", False
+
     result = []
 
-    for data in json.loads(response.text)["def"]:
+    for data in definitions:
         content = YandexTr.parse_obj(data)
 
         list_of_translations = [v.text for v in content.translations]
@@ -45,6 +44,7 @@ def parse_yandex_dict_api(phrase: str) -> tuple[str, bool]:
         result.append(
             f"<b>{content.part_of_speech}</b>: {list_of_translations}\n"
         )
+
 
     return "\n".join(result), True
 
