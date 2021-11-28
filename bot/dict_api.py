@@ -119,6 +119,32 @@ class PhraseSemantic(BaseModel):
     meanings: list[Meaning]
 
 
+def get_phrase_audio_prononciation(phrase: str) -> tuple[list, bool]:
+    response = requests.get(
+        f"https://api.dictionaryapi.dev/api/v2/entries/en/{phrase.lower()}"
+    )
+    
+    if not response:
+            return [], False
+
+    result = []
+
+    for data in json.loads(response.text):
+        content = PhraseSemantic.parse_obj(data)
+
+        if content.phonetics:
+            ph = content.phonetics
+            if ph[0].audio:
+                result.append((
+                    content.word,
+                    ph[0].text,
+                    "".join(("https://www", ph[0].audio.removeprefix("//ssl"))),
+                ))
+
+
+    return result, True
+
+
 def parse_free_dict_api(phrase: str) -> tuple[str, bool]:
 
     response = requests.get(
@@ -176,5 +202,9 @@ if __name__ == "__main__":
         print("Word below")
 
         phrase = input()
-        print(parse_yandex_dict_api(phrase))
+
+        response = requests.get(
+            f"https://api.dictionaryapi.dev/api/v2/entries/en/{phrase.lower()}"
+    )
+        print(json.loads(response.text))
 

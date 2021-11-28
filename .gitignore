@@ -1,4 +1,5 @@
 # Custom
+*.ogg
 pyrightconfig.json
 
 # Byte-compiled / optimized / DLL files

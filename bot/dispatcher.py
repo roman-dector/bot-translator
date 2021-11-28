@@ -19,6 +19,7 @@ from commands import (
         start,
         give_definition,
         give_translation,
+        send_phrase_audio_prononciation,
     )
 
 
@@ -32,7 +33,12 @@ def setup_dispatcher(dp) -> Dispatcher:
     # Handle callbacks
     dp.add_handler(CallbackQueryHandler(
         give_translation,
-        pattern="translate_button",
+        pattern="translate_phrase",
+    ))
+
+    dp.add_handler(CallbackQueryHandler(
+        send_phrase_audio_prononciation,
+        pattern="get_audio",
     ))
 
 
