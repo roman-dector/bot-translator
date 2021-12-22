@@ -15,22 +15,34 @@ from config import (
         WEBHOOK_URL,
         PORT
     )
-from commands import (
-        start,
+from buttons import (
         give_definition,
         give_translation,
         send_phrase_audio_prononciation,
+        save_to_favorites,
+    )
+from commands import (
+        start,
+        give_list_of_favorites,
+        import_favorites_in_csv,
+        drop_favorites,
     )
 
 
 def setup_dispatcher(dp) -> Dispatcher:
     
+    # commands
     dp.add_handler(CommandHandler("start", start)) 
+    dp.add_handler(CommandHandler("favorites", give_list_of_favorites))
+    dp.add_handler(CommandHandler("import_csv", import_favorites_in_csv))
+    dp.add_handler(CommandHandler("drop_favorites", drop_favorites))
+
+    # messages
     dp.add_handler(MessageHandler(
         Filters.text & ~Filters.command, give_definition
     )) 
 
-    # Handle callbacks
+    # callbacks
     dp.add_handler(CallbackQueryHandler(
         give_translation,
         pattern="translate_phrase",
@@ -39,6 +51,11 @@ def setup_dispatcher(dp) -> Dispatcher:
     dp.add_handler(CallbackQueryHandler(
         send_phrase_audio_prononciation,
         pattern="get_audio",
+    ))
+
+    dp.add_handler(CallbackQueryHandler(
+        save_to_favorites,
+        pattern="save_to_favorites",
     ))
 
 

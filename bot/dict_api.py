@@ -49,51 +49,6 @@ def parse_yandex_dict_api(phrase: str) -> tuple[str, bool]:
     return "\n".join(result), True
 
 
-#def parse_oxford_dict_api(phrase: str):
-#
-#    response = requests.get(
-#        url=f"https://od-api.oxforddictionaries.com:443/api/v2/entries/en/{phrase.lower()}",
-#        headers={"app_id": OXFORD_APP_ID, "app_key": OXFORD_APP_KEY},
-#    )
-#
-#    if not response:
-#        return "Sorry, no result found"
-#
-#    data = response.text
-#    
-#    return data
-#
-#
-#class Entry(BaseModel):
-#    etymologies: list
-#    notes: list
-#    pronunciations: list
-#    senses: list
-#
-#
-#class LexicalEntry(BaseModel):
-#    entries: list[Entry]
-#    language: str
-#    lexicalCategory: dict
-#    phrases: list
-#    text: str
-#
-#
-#class Result(BaseModel):
-#    id: str
-#    language: str
-#    lexicalEntries: list[LexicalEntry]
-#    type: str
-#    word: str
-#
-#
-#class OxfordDefinition(BaseModel):
-#    id: str
-#    metadata: dict
-#    results: list[Result]
-#    word: str
-
-
 class Definition(BaseModel):
     definition: str
     example: Optional[str]
@@ -113,7 +68,6 @@ class Phonetic(BaseModel):
 
 class PhraseSemantic(BaseModel):
     word: str
-    #phonetic: Optional[str]  # Useless, the same in Phonetic.text
     phonetics: Optional[list[Phonetic]]
     origin: Optional[str]
     meanings: list[Meaning]
