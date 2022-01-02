@@ -25,7 +25,9 @@ def give_list_of_favorites(update: Update, context: CallbackContext) -> None:
     if not list_of_favorites:
         update.message.reply_html("List of favorites is empty")
         return
-    update.message.reply_html("\n".join(list_of_favorites))
+    update.message.reply_html("\n".join(
+        map(lambda word: f"<code>{word}</code>",list_of_favorites)
+    ))
 
 
 @is_valid_user
